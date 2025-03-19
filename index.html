@@ -201,15 +201,13 @@
 
           document.querySelectorAll('.code-block').forEach(block => block.classList.remove('active'));
           document.getElementById(tab.dataset.tab).classList.add('active');
-
-          // Ensure Prism.js re-applies highlighting when switching tabs
           Prism.highlightAll();
         });
       });
 
       function copyCode(codeId) {
         const codeElement = document.getElementById(codeId);
-        const code = codeElement.textContent; // Use textContent to avoid extra spaces
+        const code = codeElement.textContent; 
         navigator.clipboard.writeText(code).then(() => {
           alert('Code copied!');
         }).catch(err => console.error('Copy failed', err));
@@ -226,8 +224,7 @@
 `;
 
         document.getElementById("html-code").textContent = code;  
-         const csscode = `/* From Uiverse.io by chase2k25 */ 
-/* Switch Container */
+         const csscode = `
 .switch-container {
   position: relative;
   width: 150px;
