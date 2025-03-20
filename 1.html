@@ -1,1 +1,97 @@
-1
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Image to PDF Converter</h2>
+        <input type="file" id="imageInput" multiple accept="image/*">
+        <br>
+        <button onclick="convertToPDF()">Convert & Download PDF</button>
+    </div>
+
+    <script>
+        async function convertToPDF() {
+            const { jsPDF } = window.jspdf;
+            let input = document.getElementById("imageInput");
+            if (input.files.length === 0) {
+                alert("Please select at least one image.");
+                return;
+            }
+
+            let pdf;
+            for (let i = 0; i < input.files.length; i++) {
+                let file = input.files[i];
+                let reader = new FileReader();
+                let img = await new Promise((resolve) => {
+                    reader.onload = () => {
+                        let image = new Image();
+                        image.src = reader.result;
+                        image.onload = () => resolve(image);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                let imgWidth = img.width;
+                let imgHeight = img.height;
+                let orientation = imgWidth > imgHeight ? 'l' : 'p';
+
+                if (!pdf) {
+                    pdf = new jsPDF({ orientation, unit: 'px', format: [imgWidth, imgHeight] });
+                } else {
+                    pdf.addPage([imgWidth, imgHeight], orientation);
+                }
+
+                pdf.addImage(img, 'JPEG', 0, 0, imgWidth, imgHeight);
+            }
+
+            pdf.save("converted.pdf");
+        }
+    </script>
+
+</body>
+
+</html> 
